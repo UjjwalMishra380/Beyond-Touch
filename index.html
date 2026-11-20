@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1110">
+    <meta name="description" content="Choose your dream car, steer with real hand motion, and race through immersive 3D worlds.">
+    <title>BEYOND TOUCH — Drive Beyond Touch</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js" } }
+    </script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <section class="screen welcome-screen landing-screen oem-theme" id="welcome-screen" aria-label="Beyond Touch gaming landing page">
+        <header class="landing-header">
+          <a class="brand landing-brand" href="#landing-home" aria-label="Beyond Touch home">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>BEYOND TOUCH</span>
+          </a>
+          <button class="landing-menu-button" id="landing-menu-button" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button>
+          <nav class="landing-nav" id="landing-nav" aria-label="Main navigation">
+            <a class="active" href="#landing-home"><span>01</span> GRID</a>
+            <button type="button" id="create-avatar"><span>02</span> STUDIO</button>
+            <a href="#car-selector"><span>03</span> CARS</a>
+          </nav>
+          <button class="adventure-button" id="join-adventure" type="button">START ENGINE <span>↗</span></button>
+        </header>
+
+        <div class="game-hero" id="landing-home">
+          <div class="raceway-background" aria-hidden="true"></div>
+          <div class="raceway-vignette" aria-hidden="true"></div>
+          <div class="raceway-lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="car-platform" aria-hidden="true"><span></span><i></i></div>
+
+          <div class="hero-showcase car-showcase" aria-label="Interactive 3D car garage">
+            <div class="car-aura" aria-hidden="true"></div>
+            <div class="car-stage" id="car-stage">
+              <div class="car-contact-shadow" aria-hidden="true"></div>
+              <canvas id="car-canvas" role="img" aria-label="Drag to rotate or scroll to zoom the selected 3D car"></canvas>
+              <div class="car-fallback" aria-hidden="true"><i></i><span></span><b></b></div>
+            </div>
+            <div class="car-label"><span class="car-live-dot"></span> SIM PREVIEW <i id="car-status">LOADING RIDE</i></div>
+            <div class="garage-readout"><span>SIM / 01</span><b>READY</b><small>STUDIO LIGHTING</small></div>
+          </div>
+
+          <div class="hero-copy game-copy" id="landing-about">
+            <span class="game-eyebrow"><i></i> SIM 01 <b>·</b> MOTION RACING</span>
+            <h1>DRIVE YOUR<br><span>DREAM.</span></h1>
+            <p>HAND-STEERED. FULL THROTTLE.</p>
+          </div>
+
+          <aside class="home-sidebar" id="home-sidebar" aria-label="Home garage and account">
+          <aside class="login-panel home-signin" id="home-signin" aria-label="Sign in to Beyond Touch" hidden>
+            <button class="signin-back-button" id="back-to-configurator" type="button"><span aria-hidden="true">←</span> BACK TO GARAGE</button>
+            <div class="login-gamepad" aria-hidden="true">
+              <svg viewBox="0 0 64 42"><path d="M17 7h30c6 0 9 4 11 11l4 15c1 5-5 8-9 5l-9-7H20l-9 7c-4 3-10 0-9-5l4-15C8 11 11 7 17 7Zm2 9v5h-5v4h5v5h4v-5h5v-4h-5v-5Zm27 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm7 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+            </div>
+            <h2 id="login-title" tabindex="-1">PILOT ACCESS</h2>
+            <p class="login-subtitle" id="login-subtitle">SIGN IN TO START YOUR RACE</p>
+            <div class="auth-tabs" role="tablist" aria-label="Account action">
+              <button class="auth-tab active" type="button" data-auth-tab="signin" role="tab" aria-selected="true">Sign In</button>
+              <button class="auth-tab" type="button" data-auth-tab="signup" role="tab" aria-selected="false">Sign Up</button>
+            </div>
+            <form class="account-form" id="account-form">
+              <label class="login-input"><span aria-hidden="true">✉</span><input id="account-email" type="email" placeholder="PILOT ID / EMAIL" autocomplete="email" required></label>
+              <label class="login-input"><span aria-hidden="true">♙</span><input id="account-password" type="password" placeholder="ACCESS KEY" autocomplete="current-password" minlength="8" required><button type="button" id="password-toggle" aria-label="Show password">◉</button></label>
+              <div class="login-options">
+                <label class="remember-label"><input id="remember-me" type="checkbox" checked><span></span> Remember me</label>
+                <button class="forgot-button" id="forgot-password" type="button">Forgot Password?</button>
+              </div>
+              <button class="login-submit" id="account-submit" type="submit">CONNECT <span>›</span></button>
+              <div class="signin-message" id="signin-message" role="status" aria-live="polite"></div>
+            </form>
+            <div class="social-divider"><span></span> OR <span></span></div>
+            <div class="social-buttons">
+              <button class="social-button" id="google-signin" type="button"><b class="google-letter">G</b> Google</button>
+              <button class="social-button" id="github-signin" type="button"><b class="github-letter">●</b> GitHub</button>
+              <button class="social-button" id="discord-signin" type="button"><b class="discord-letter">◕</b> Discord</button>
+            </div>
+            <p class="account-footnote" id="account-footnote">NEW PILOT? <button type="button" data-auth-tab="signup">REGISTER</button></p>
+            <button class="guest-link" id="continue-guest" type="button">CONTINUE AS GUEST <span>→</span></button>
+          </aside>
+
+          <section class="home-configurator" id="home-configurator" aria-label="Choose your car and showroom settings">
+            <div class="sidebar-heading">
+              <span class="sidebar-overline"><i></i> HOME GARAGE</span>
+              <h2>YOUR MACHINE</h2>
+              <p>Pick a ride. Make it yours.</p>
+            </div>
+            <div class="car-selector" id="car-selector" aria-label="Choose your vehicle">
+              <button class="car-choice active" type="button" data-car="race-future" aria-pressed="true">
+                <span class="car-index">01</span>
+                <span class="car-meta"><strong>NEON GT</strong><small>Hyper · SIM SPEC 2.1 s / 348 km/h</small></span>
+                <span class="car-choice-icon" aria-hidden="true">↗</span>
+              </button>
+              <button class="car-choice" type="button" data-car="race" aria-pressed="false">
+                <span class="car-index">02</span>
+                <span class="car-meta"><strong>RACER</strong><small>Track · SIM SPEC 2.6 s / 325 km/h</small></span>
+                <span class="car-choice-icon" aria-hidden="true">↗</span>
+              </button>
+              <button class="car-choice" type="button" data-car="hatchback-sports" aria-pressed="false">
+                <span class="car-index">03</span>
+                <span class="car-meta"><strong>SPORT</strong><small>Tourer · SIM SPEC 3.4 s / 280 km/h</small></span>
+                <span class="car-choice-icon" aria-hidden="true">↗</span>
+              </button>
+            </div>
+
+            <div class="sidebar-control-row">
+              <div class="trim-selector" role="group" aria-label="Choose signature finish">
+                <span class="trim-label">FINISH</span>
+                <div class="trim-swatches">
+                  <button class="trim-choice active" type="button" data-trim="cyan" style="--swatch-color:#7be3f6" aria-label="Glacier Cyan" title="Glacier Cyan" aria-pressed="true"></button>
+                  <button class="trim-choice" type="button" data-trim="pink" style="--swatch-color:#e87ab8" aria-label="Velvet Rose" title="Velvet Rose" aria-pressed="false"></button>
+                  <button class="trim-choice" type="button" data-trim="lime" style="--swatch-color:#c6f279" aria-label="Volt Acid" title="Volt Acid" aria-pressed="false"></button>
+                </div>
+              </div>
+              <div class="view-selector" role="group" aria-label="Showroom lighting mood">
+                <span class="trim-label">LIGHTING</span>
+                <button class="light-toggle" id="showroom-light-toggle" type="button" data-mood="studio" aria-pressed="false" title="Switch showroom lighting">
+                  <span class="light-indicator" aria-hidden="true"></span>
+                  <span id="light-mood-label">STUDIO</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="view-selector sidebar-angle-selector" role="group" aria-label="Camera angle presets">
+              <span class="trim-label">CAMERA ANGLE</span>
+              <div class="cam-pills">
+                <button class="cam-choice active" type="button" data-cam="front-quarter" aria-pressed="true">3/4</button>
+                <button class="cam-choice" type="button" data-cam="side" aria-pressed="false">SIDE</button>
+                <button class="cam-choice" type="button" data-cam="rear" aria-pressed="false">REAR</button>
+              </div>
+            </div>
+
+            <button class="hero-create-button" id="hero-create-button" type="button">
+              <span>TEST DRIVE</span>
+              <i aria-hidden="true">→</i>
+            </button>
+          </section>
+          </aside>
+        </div>
+
+        <div class="landing-below" id="game-worlds" aria-hidden="true"></div>
+      </section>
+
+      <section class="screen creator-screen" id="creator-screen" aria-label="Avatar creator" hidden>
+        <header class="creator-topbar">
+          <a class="brand creator-brand" href="#" aria-label="Beyond Touch home">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>BEYOND TOUCH</span>
+          </a>
+          <div class="creator-title"><span>AVATAR STUDIO</span><i></i> NEW CREATION</div>
+          <div class="top-actions">
+            <button class="top-icon" id="undo-button" type="button" aria-label="Undo" title="Undo">↶</button>
+            <button class="top-icon" id="redo-button" type="button" aria-label="Redo" title="Redo">↷</button>
+            <button class="motion-button" id="motion-toggle" type="button" aria-label="Turn on motion tracking"><span class="motion-dot"></span> <span id="motion-button-label">MOTION OFF</span></button>
+            <button class="studio-drive-button" id="drive-from-studio" type="button">DRIVE <span aria-hidden="true">↗</span></button>
+            <button class="export-button" id="export-avatar" type="button">Export <span aria-hidden="true">↗</span></button>
+            <button class="profile-button" id="profile-button" type="button" aria-label="Account options">U</button>
+          </div>
+          <div class="profile-menu" id="profile-menu" hidden>
+            <span id="profile-name">Guest creator</span>
+            <button id="restart-flow" type="button">Start over</button>
+          </div>
+        </header>
+
+        <div class="creator-layout">
+          <nav class="tool-rail" aria-label="Studio modes" role="tablist">
+            <button class="tool-tab active" type="button" role="tab" aria-selected="true" data-category="avatar"><span class="tool-icon">◉</span><span>Avatar</span></button>
+            <button class="tool-tab" type="button" role="tab" aria-selected="false" data-category="garage"><span class="tool-icon">▰</span><span>Car</span></button>
+            <button class="tool-tab" type="button" role="tab" aria-selected="false" data-category="headwear"><span class="tool-icon">♧</span><span>Headwear</span></button>
+            <button class="tool-tab" type="button" role="tab" aria-selected="false" data-category="garments"><span class="tool-icon">♙</span><span>Garments</span></button>
+            <button class="tool-tab" type="button" role="tab" aria-selected="false" data-category="shoes"><span class="tool-icon">⌑</span><span>Shoes</span></button>
+            <button class="tool-tab" type="button" role="tab" aria-selected="false" data-category="accessories"><span class="tool-icon">◇</span><span>Accessories</span></button>
+          </nav>
+
+          <aside class="edit-panel" aria-label="Studio controls">
+            <div class="panel-heading">
+              <span class="panel-overline" id="panel-overline">YOUR CHARACTER</span>
+              <h2 id="category-title">Avatar</h2>
+              <p id="category-description">Start with the details that make you, you.</p>
+            </div>
+            <div class="panel-content">
+              <section class="settings-section category-pane" data-pane="avatar">
+                <div class="control-heading"><span>Character</span><span class="step-count">01</span></div>
+                <div class="option-grid character-options">
+                  <button class="choice-button selected" type="button" data-choice="character" data-value="wanderer"><span class="mini-avatar mini-one">✦</span><span>Wanderer</span></button>
+                  <button class="choice-button" type="button" data-choice="character" data-value="dreamer"><span class="mini-avatar mini-two">✳</span><span>Dreamer</span></button>
+                  <button class="choice-button" type="button" data-choice="character" data-value="pioneer"><span class="mini-avatar mini-three">◇</span><span>Pioneer</span></button>
+                </div>
+                <div class="control-heading spaced"><span>Skin tone</span><span class="color-preview" id="skin-preview"></span></div>
+                <div class="swatch-row">
+                  <button class="color-swatch selected" type="button" data-color="#d89c7e" data-target="skin" aria-label="Warm skin tone"></button>
+                  <button class="color-swatch" type="button" data-color="#b9755e" data-target="skin" aria-label="Deep warm skin tone"></button>
+                  <button class="color-swatch" type="button" data-color="#f0c7a6" data-target="skin" aria-label="Light skin tone"></button>
+                  <button class="color-swatch" type="button" data-color="#9d6658" data-target="skin" aria-label="Rich skin tone"></button>
+                  <label class="custom-color" aria-label="Choose skin tone"><input type="color" id="skin-color" value="#d89c7e"></label>
+                </div>
+                <div class="control-heading spaced"><span>Hair color</span><span class="color-preview hair-preview" id="hair-preview"></span></div>
+                <div class="swatch-row">
+                  <button class="color-swatch hair-swatch selected" type="button" data-color="#532544" data-target="hair" aria-label="Plum hair"></button>
+                  <button class="color-swatch hair-swatch" type="button" data-color="#28243a" data-target="hair" aria-label="Dark hair"></button>
+                  <button class="color-swatch hair-swatch" type="button" data-color="#d9a64b" data-target="hair" aria-label="Golden hair"></button>
+                  <button class="color-swatch hair-swatch" type="button" data-color="#bd6554" data-target="hair" aria-label="Copper hair"></button>
+                  <label class="custom-color" aria-label="Choose hair color"><input type="color" id="hair-color" value="#532544"></label>
+                </div>
+              </section>
+
+              <section class="settings-section category-pane" data-pane="garage" hidden>
+                <div class="control-heading"><span>SELECT MACHINE</span><span class="step-count">3 MODELS</span></div>
+                <div class="studio-car-grid">
+                  <button class="studio-car-choice active" type="button" data-car="race-future" aria-pressed="true"><span class="studio-car-icon">01</span><span><b>NEON GT</b><small>FUTURE CLASS</small></span><i aria-hidden="true">✓</i></button>
+                  <button class="studio-car-choice" type="button" data-car="race" aria-pressed="false"><span class="studio-car-icon">02</span><span><b>RACER</b><small>TRACK SPEC</small></span><i aria-hidden="true">✓</i></button>
+                  <button class="studio-car-choice" type="button" data-car="hatchback-sports" aria-pressed="false"><span class="studio-car-icon">03</span><span><b>SPORT</b><small>STREET CLASS</small></span><i aria-hidden="true">✓</i></button>
+                </div>
+                <div class="control-heading spaced"><span>NEON TRIM</span><span class="step-count">COLOR</span></div>
+                <div class="studio-trim-row" aria-label="Choose neon trim color">
+                  <button class="studio-trim-choice active" type="button" data-trim="cyan" style="--swatch-color:#7be3f6" aria-label="Glacier Cyan" aria-pressed="true"></button>
+                  <button class="studio-trim-choice" type="button" data-trim="pink" style="--swatch-color:#e87ab8" aria-label="Velvet Rose" aria-pressed="false"></button>
+                  <button class="studio-trim-choice" type="button" data-trim="lime" style="--swatch-color:#c6f279" aria-label="Volt Acid" aria-pressed="false"></button>
+                </div>
+                <button class="studio-drive-action" id="studio-drive-button" type="button">TAKE THIS CAR <span>↗</span></button>
+              </section>
+
+              <section class="settings-section category-pane" data-pane="headwear" hidden>
+                <div class="control-heading"><span>Choose your look</span><span class="step-count">02</span></div>
+                <div class="choice-list">
+                  <button class="list-choice selected" type="button" data-choice="headwear" data-value="none"><span class="item-symbol">○</span><span><b>No headwear</b><small>Keep it natural</small></span><i>✓</i></button>
+                  <button class="list-choice" type="button" data-choice="headwear" data-value="beanie"><span class="item-symbol">♧</span><span><b>Cloud beanie</b><small>Soft knit, big energy</small></span><i>✓</i></button>
+                  <button class="list-choice" type="button" data-choice="headwear" data-value="halo"><span class="item-symbol">◌</span><span><b>Orbit halo</b><small>A little otherworldly</small></span><i>✓</i></button>
+                  <button class="list-choice" type="button" data-choice="headwear" data-value="cap"><span class="item-symbol">⌒</span><span><b>Trail cap</b><small>Made for exploring</small></span><i>✓</i></button>
+                </div>
+                <div class="helper-card"><span>✦</span><p>Pick a piece to preview it on your avatar. You can change it anytime.</p></div>
+              </section>
+
+              <section class="settings-section category-pane" data-pane="garments" hidden>
+                <div class="control-heading"><span>Garment</span><span class="step-count">03</span></div>
+                <div class="option-grid garment-options">
+                  <button class="choice-button selected" type="button" data-choice="garment" data-value="tunic"><span class="garment-thumb tunic-thumb"></span><span>Day tunic</span></button>
+                  <button class="choice-button" type="button" data-choice="garment" data-value="jacket"><span class="garment-thumb jacket-thumb"></span><span>Orbit jacket</span></button>
+                  <button class="choice-button" type="button" data-choice="garment" data-value="suit"><span class="garment-thumb suit-thumb"></span><span>Cloud suit</span></button>
+                </div>
+                <label class="field-label" for="material-select">Material</label>
+                <select class="select-control" id="material-select">
+                  <option value="soft">Soft knit</option><option value="satin">Stardust satin</option><option value="tech">Trail tech</option>
+                </select>
+                <label class="field-label" for="texture-select">Texture</label>
+                <select class="select-control" id="texture-select">
+                  <option value="plain">No texture</option><option value="weave">Cloud weave</option><option value="stars">Tiny stars</option>
+                </select>
+                <div class="slider-label"><label for="tiling-slider">Tiling</label><span id="tiling-value">1.0×</span></div>
+                <input class="range-control" id="tiling-slider" type="range" min="1" max="4" step="0.5" value="1">
+                <div class="slider-label"><label for="rotation-slider">UV rotation</label><span id="rotation-value">0°</span></div>
+                <input class="range-control" id="rotation-slider" type="range" min="-180" max="180" step="15" value="0">
+                <div class="control-heading spaced"><span>Color</span><label class="custom-color"><input type="color" id="outfit-color" value="#83b9a5" aria-label="Choose garment color"></label></div>
+                <div class="swatch-row">
+                  <button class="color-swatch outfit-swatch selected" type="button" data-color="#83b9a5" aria-label="Seafoam garment"></button>
+                  <button class="color-swatch outfit-swatch" type="button" data-color="#c88a9d" aria-label="Rose garment"></button>
+                  <button class="color-swatch outfit-swatch" type="button" data-color="#8880c4" aria-label="Lavender garment"></button>
+                  <button class="color-swatch outfit-swatch" type="button" data-color="#e4bd70" aria-label="Sunshine garment"></button>
+                  <button class="color-swatch outfit-swatch" type="button" data-color="#425e74" aria-label="Deep blue garment"></button>
+                </div>
+              </section>
+
+              <section class="settings-section category-pane" data-pane="shoes" hidden>
+                <div class="control-heading"><span>Choose your shoes</span><span class="step-count">04</span></div>
+                <div class="choice-grid choice-grid-two">
+                  <button class="shoe-choice selected" type="button" data-choice="shoes" data-value="boots"><span class="shoe-art boot-art"></span><b>Moon boots</b><small>Ready for anything</small></button>
+                  <button class="shoe-choice" type="button" data-choice="shoes" data-value="sneakers"><span class="shoe-art sneaker-art"></span><b>Day sneakers</b><small>Light on your feet</small></button>
+                  <button class="shoe-choice" type="button" data-choice="shoes" data-value="high-tops"><span class="shoe-art high-top-art"></span><b>High tops</b><small>Make a statement</small></button>
+                  <button class="shoe-choice" type="button" data-choice="shoes" data-value="barefoot"><span class="shoe-art bare-art"></span><b>Grounded</b><small>Just as you are</small></button>
+                </div>
+              </section>
+
+              <section class="settings-section category-pane" data-pane="accessories" hidden>
+                <div class="control-heading"><span>Little details</span><span class="step-count">05</span></div>
+                <div class="choice-grid choice-grid-two">
+                  <button class="accessory-choice selected" type="button" data-choice="accessory" data-value="none"><span>✧</span><b>Nothing extra</b><small>Clean and simple</small></button>
+                  <button class="accessory-choice" type="button" data-choice="accessory" data-value="glasses"><span>◎</span><b>Star glasses</b><small>See the brighter side</small></button>
+                  <button class="accessory-choice" type="button" data-choice="accessory" data-value="scarf"><span>〰</span><b>Comet scarf</b><small>A little extra color</small></button>
+                  <button class="accessory-choice" type="button" data-choice="accessory" data-value="badge"><span>✳</span><b>Explorer pin</b><small>Show your spark</small></button>
+                </div>
+              </section>
+            </div>
+            <div class="panel-footer"><span><i></i> ALL CHANGES SAVED LOCALLY</span><button type="button" id="reset-avatar">Reset</button></div>
+          </aside>
+
+          <section class="stage" id="avatar-stage" aria-label="Avatar preview">
+            <div class="stage-background">
+              <div class="stage-sky"></div>
+              <div class="stage-haze"></div>
+              <div class="stage-mountain mountain-left"></div>
+              <div class="stage-mountain mountain-right"></div>
+              <div class="stage-water"></div>
+              <div class="stage-shore"></div>
+              <div class="stage-rock rock-left"></div>
+              <div class="stage-rock rock-right"></div>
+            </div>
+            <div class="stage-header"><span class="stage-world"><i></i><span id="stage-world-label">MY AVATAR</span></span><span class="stage-view" id="stage-view-label">PREVIEW MODE <b>·</b> 01</span></div>
+            <div class="pedestal"><div class="pedestal-top"></div><div class="pedestal-side"></div><div class="pedestal-ring"></div></div>
+            <div class="studio-car-platform" aria-hidden="true"><span></span><i></i></div>
+            <canvas id="studio-car-canvas" role="img" aria-label="3D car preview. Drag to rotate and use the scroll wheel to zoom." tabindex="0"></canvas>
+            <div class="studio-car-readout" id="studio-car-readout" aria-live="polite"><span>GARAGE / 3D PREVIEW</span><b id="studio-car-status">LOADING MODEL</b></div>
+            <div class="studio-car-hint" id="studio-car-hint" hidden>DRAG TO ORBIT <i></i> SCROLL TO ZOOM</div>
+            <div class="avatar-figure" id="avatar-figure" data-headwear="none" data-garment="tunic" data-shoes="boots" data-accessory="none">
+              <div class="avatar-aura"></div>
+              <div class="avatar-hair-back"></div>
+              <div class="avatar-head">
+                <div class="avatar-hair-top"></div>
+                <div class="avatar-face"><i class="face-eye eye-left"></i><i class="face-eye eye-right"></i><span class="face-blush blush-left"></span><span class="face-blush blush-right"></span><span class="face-mouth"></span></div>
+                <div class="avatar-glasses"><i></i><i></i></div>
+              </div>
+              <div class="avatar-headwear"></div>
+              <div class="avatar-neck"></div>
+              <div class="avatar-arm avatar-arm-left"><span></span></div>
+              <div class="avatar-arm avatar-arm-right"><span></span></div>
+              <div class="avatar-torso"><div class="avatar-outfit"><span class="outfit-mark">✳</span><span class="outfit-pattern"></span></div></div>
+              <div class="avatar-scarf"></div>
+              <div class="avatar-skirt"></div>
+              <div class="avatar-leg avatar-leg-left"></div>
+              <div class="avatar-leg avatar-leg-right"></div>
+              <div class="avatar-shoe avatar-shoe-left"></div>
+              <div class="avatar-shoe avatar-shoe-right"></div>
+              <div class="avatar-badge">✳</div>
+            </div>
+            <div class="stage-caption"><span class="caption-line"></span><span id="avatar-caption">WANDERER · NEW CREATION</span><span class="caption-line"></span></div>
+            <div class="stage-hint" id="stage-hint"><span class="hint-key">DRAG</span> to rotate <span class="hint-divider"></span> <span class="hint-key">SCROLL</span> to zoom</div>
+            <div class="motion-panel" id="motion-panel" hidden>
+              <div class="motion-panel-top"><span><i></i> HAND TRACKING</span><button type="button" id="close-motion" aria-label="Close motion panel">×</button></div>
+              <video id="camera-video" playsinline muted></video>
+              <div class="motion-panel-status" id="motion-status">Waiting for camera</div>
+            </div>
+            <button class="stage-change" id="change-pose" type="button">CHANGE POSE <span aria-hidden="true">›</span></button>
+          </section>
+        </div>
+        <div class="toast-message" id="toast-message" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="drive-screen" id="drive-screen" aria-label="Motion-controlled racing game" hidden>
+        <canvas id="drive-canvas" aria-label="3D racing game"></canvas>
+        <div class="drive-screen-shade" aria-hidden="true"></div>
+        <header class="drive-topbar">
+          <button class="drive-back-button" id="exit-driving" type="button"><span>←</span> GARAGE</button>
+          <div class="drive-brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>BEYOND TOUCH <small>LIVE RACING</small></span></div>
+          <div class="drive-top-status"><i></i><span id="drive-mode-label">READY? LET’S ROLL!</span></div>
+        </header>
+
+        <div class="drive-hud" aria-label="Race telemetry">
+          <div class="drive-speed-panel">
+            <span class="hud-kicker">VELOCITY</span>
+            <div><strong id="drive-speed">000</strong><small>KM/H</small></div>
+            <div class="speed-meter"><i id="drive-speed-fill"></i></div>
+          </div>
+          <div class="drive-stats-panel">
+            <div><span>LAP</span><b id="drive-lap">01 <i>/ 03</i></b></div>
+            <div><span>DISTANCE</span><b><output id="drive-distance">0.00</output><small> KM</small></b></div>
+            <div><span>BEST</span><b><output id="drive-best">0.00</output><small> KM</small></b></div>
+          </div>
+        </div>
+
+        <div class="drive-camera-card" id="drive-camera-card" hidden>
+          <div class="drive-camera-frame"><video id="drive-camera" playsinline muted></video><span id="drive-hand-indicator"></span></div>
+          <div class="drive-camera-copy"><b>HAND TRACKING</b><span id="drive-status" role="status">WAITING FOR CAMERA</span></div>
+        </div>
+
+        <div class="drive-start-overlay" id="drive-start-overlay">
+          <div class="drive-start-card">
+            <span class="drive-card-eyebrow"><i></i> YOUR RACE STARTS HERE</span>
+            <h2>Ready to<br><span>roll?</span></h2>
+            <p>Say hi to your camera, then steer with your hand. Make a fist when you want a little turbo!</p>
+            <div class="drive-instructions">
+              <div><span>01</span><b>Give your camera a wave</b><small>Your video stays right here in your browser.</small></div>
+              <div><span>02</span><b>Hold your hand in the middle</b><small>We'll find your comfy steering spot.</small></div>
+              <div><span>03</span><b>Steer, dodge, and zoom!</b><small>Move side to side; make a fist to boost.</small></div>
+            </div>
+            <button class="drive-primary-button" id="enable-drive" type="button">LET’S DRIVE WITH HANDS! <span>→</span></button>
+            <button class="drive-secondary-button" id="keyboard-drive" type="button">TAKE THE KEYBOARD <span>WASD / ARROWS</span></button>
+            <div class="drive-setup-message" id="drive-setup-message" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="drive-end-overlay" id="drive-end-overlay" hidden>
+          <div class="drive-end-card">
+            <span class="drive-card-eyebrow"><i></i> THAT WAS A BLAST</span>
+            <h2 id="drive-end-title">Nice drive!</h2>
+            <p>Your distance: <strong id="drive-result">0.00 KM</strong></p>
+            <button class="drive-primary-button" id="drive-retry" type="button">ONE MORE RIDE? <span>↻</span></button>
+            <button class="drive-secondary-button" id="end-return" type="button">BACK TO THE GARAGE</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
