@@ -1,6 +1,6 @@
 // Set these values and provide a server-side code-exchange endpoint to enable Google OAuth.
 const GOOGLE_CLIENT_ID = "";
-const GOOGLE_AUTH_ENDPOINT = "/api/auth/google";
+const GOOGLE_AUTH_ENDPOINT = "./api/auth/google";
 const VISION_VERSION = "1.2.3";
 const VISION_BASE_URL = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VISION_VERSION}`;
 const AVATAR_STORAGE_KEY = "motionverse.avatar.v1";
@@ -405,27 +405,32 @@ async function startGoogleSignIn() {
 }
 
 async function loadHandTracker() {
-  const vision = await import(`${VISION_BASE_URL}/vision_bundle.mjs`);
-  const files = await vision.FilesetResolver.forVisionTasks(`${VISION_BASE_URL}/wasm`);
-  const options = {
-    baseOptions: {
-      modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-      delegate: "GPU"
-    },
-    runningMode: "VIDEO",
-    numHands: 1,
-    minHandDetectionConfidence: 0.45,
-    minHandPresenceConfidence: 0.45,
-    minTrackingConfidence: 0.45
-  };
   try {
-    return await vision.HandLandmarker.createFromOptions(files, options);
-  } catch (gpuError) {
-    console.warn("MotionVerse GPU hand tracking is unavailable; retrying on CPU:", gpuError);
-    return vision.HandLandmarker.createFromOptions(files, {
-      ...options,
-      baseOptions: { ...options.baseOptions, delegate: "CPU" }
-    });
+    const vision = await import(`${VISION_BASE_URL}/vision_bundle.mjs`);
+    const files = await vision.FilesetResolver.forVisionTasks(`${VISION_BASE_URL}/wasm`);
+    const options = {
+      baseOptions: {
+        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+        delegate: "GPU"
+      },
+      runningMode: "VIDEO",
+      numHands: 1,
+      minHandDetectionConfidence: 0.45,
+      minHandPresenceConfidence: 0.45,
+      minTrackingConfidence: 0.45
+    };
+    try {
+      return await vision.HandLandmarker.createFromOptions(files, options);
+    } catch (gpuError) {
+      console.warn("BEYOND TOUCH GPU hand tracking is unavailable; retrying on CPU:", gpuError);
+      return await vision.HandLandmarker.createFromOptions(files, {
+        ...options,
+        baseOptions: { ...options.baseOptions, delegate: "CPU" }
+      });
+    }
+  } catch (error) {
+    console.error("BEYOND TOUCH hand-tracking library, WASM, or model failed to load:", error);
+    throw error;
   }
 }
 
@@ -533,7 +538,7 @@ async function startMotion() {
     motionStatus.textContent = "Show one hand to your camera";
     animateHand();
   } catch (error) {
-    console.error("MotionVerse camera setup failed:", error);
+    console.error("BEYOND TOUCH webcam permission or camera setup failed:", error);
     stopMotion(error && error.name === "NotAllowedError"
       ? "Camera permission was denied. Allow camera access, then try again."
       : error && error.name === "NotFoundError"
@@ -1473,7 +1478,7 @@ async function prepareRace(useCamera) {
     driveLastVideoTime = -1;
     driveTrackingFrame = requestAnimationFrame(animateDriveHands);
   } catch (error) {
-    console.error("BEYOND TOUCH race setup failed:", error);
+    console.error("BEYOND TOUCH webcam permission or race setup failed:", error);
     if (setupVersion !== driveSetupVersion) return;
     stopDriveCamera();
     setupMessage.textContent = error.name === "NotAllowedError"
